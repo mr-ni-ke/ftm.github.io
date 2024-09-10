@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frendly Tarkov Map</title>
+    <style>
+        body {
+            background-color: rgb(58, 58, 58); /* Фон всего сайта */
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 1271px;
+        }
+        .map-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: opacity 0.3s ease;
+        }
+        .button-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .dropdown-container {
+            display: flex;
+            align-items: center; /* Вертикальное выравнивание по центру */
+            gap: 10px; /* Отступ между кнопками */
+        }
+        .dropdown-button {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            display: inline-block;
+            flex: 1; /* Позволяет кнопке растягиваться */
+            text-align: left; /* Текст слева */
+        }
+        .faq-button {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            display: inline-block;
+            width: 60px;
+            text-align: center;
+            visibility: hidden; /* Скрыта по умолчанию */
+        }
+        .faq-button:hover {
+            background-color: #e0e0e0;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            z-index: 101;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .dropdown select, .dropdown input {
+            width: 100%;
+            border: none;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .dropdown select {
+            background-color: #fff;
+            color: #000;
+        }
+        .dropdown input {
+            background-color: #fff;
+            color: #000;
+        }
+        .search-input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .bring-to-front-buttons {
+            display: flex;
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="map-container">
+        <!-- Кнопки управления -->
+        <div class="button-container">
+            <div class="button-group">
+                <div class="dropdown-container">
+                    <button id="dropdown-button1" class="dropdown-button" onclick="toggleDropdown('dropdown1')">Слой 1</button>
+                    <button id="faq-button1" class="faq-button" onclick="openFAQ('faq-link1')">FAQ</button>
+                    <div id="dropdown1" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer1', this.value)">
+                        <select id="select-layer1" onchange="updateLayer('layer1', this.value, 'dropdown-button1', 'faq-button1')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer1" placeholder="Введите ссылку" oninput="updateLayer('layer1', this.value, 'dropdown-button1', 'faq-button1')">
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <button id="dropdown-button2" class="dropdown-button" onclick="toggleDropdown('dropdown2')">Слой 2</button>
+                    <button id="faq-button2" class="faq-button" onclick="openFAQ('faq-link2')">FAQ</button>
+                    <div id="dropdown2" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer2', this.value)">
+                        <select id="select-layer2" onchange="updateLayer('layer2', this.value, 'dropdown-button2', 'faq-button2')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer2" placeholder="Введите ссылку" oninput="updateLayer('layer2', this.value, 'dropdown-button2', 'faq-button2')">
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <button id="dropdown-button3" class="dropdown-button" onclick="toggleDropdown('dropdown3')">Слой 3</button>
+                    <button id="faq-button3" class="faq-button" onclick="openFAQ('faq-link3')">FAQ</button>
+                    <div id="dropdown3" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer3', this.value)">
+                        <select id="select-layer3" onchange="updateLayer('layer3', this.value, 'dropdown-button3', 'faq-button3')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer3" placeholder="Введите ссылку" oninput="updateLayer('layer3', this.value, 'dropdown-button3', 'faq-button3')">
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <button id="dropdown-button4" class="dropdown-button" onclick="toggleDropdown('dropdown4')">Слой 4</button>
+                    <button id="faq-button4" class="faq-button" onclick="openFAQ('faq-link4')">FAQ</button>
+                    <div id="dropdown4" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer4', this.value)">
+                        <select id="select-layer4" onchange="updateLayer('layer4', this.value, 'dropdown-button4', 'faq-button4')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer4" placeholder="Введите ссылку" oninput="updateLayer('layer4', this.value, 'dropdown-button4', 'faq-button4')">
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <button id="dropdown-button5" class="dropdown-button" onclick="toggleDropdown('dropdown5')">Слой 5</button>
+                    <button id="faq-button5" class="faq-button" onclick="openFAQ('faq-link5')">FAQ</button>
+                    <div id="dropdown5" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer5', this.value)">
+                        <select id="select-layer5" onchange="updateLayer('layer5', this.value, 'dropdown-button5', 'faq-button5')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer5" placeholder="Введите ссылку" oninput="updateLayer('layer5', this.value, 'dropdown-button5', 'faq-button5')">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bring-to-front-buttons">
+            <button onclick="bringToFront('layer1')">Вывести слой 1 наверх</button>
+            <button onclick="bringToFront('layer2')">Вывести слой 2 наверх</button>
+            <button onclick="bringToFront('layer3')">Вывести слой 3 наверх</button>
+            <button onclick="bringToFront('layer4')">Вывести слой 4 наверх</button>
+            <button onclick="bringToFront('layer5')">Вывести слой 5 наверх</button>
+        </div>
+
+        <!-- Слои карт -->
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer1" class="map-layer" style="z-index: 10; opacity: 0.7;"></iframe>
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer2" class="map-layer" style="z-index: 20; opacity: 0.7;"></iframe>
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer3" class="map-layer" style="z-index: 30; opacity: 0.7;"></iframe>
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer4" class="map-layer" style="z-index: 40; opacity: 0.7;"></iframe>
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer5" class="map-layer" style="z-index: 50; opacity: 0.7;"></iframe>
+    </div>
+
+    <script>
+        const MIN_Z_INDEX = 10;
+        const MAX_Z_INDEX = 100;
+
+        // Загрузка данных из текстового файла и создание выпадающих списков
+        async function loadLayerData() {
+            try {
+                const response = await fetch('layers.txt');
+                const data = await response.text();
+                const lines = data.split('\n');
+                let currentCategory = '';
+                let dropdowns = {};
+
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (!line) return;
+                    
+                    if (line.startsWith('Локация')) {
+                        currentCategory = line; // Название локации
+                        dropdowns[currentCategory] = [];
+                    } else {
+                        const [questName, url, faqLink] = line.split(',');
+                        if (url) {
+                            dropdowns[currentCategory].push({ questName, url, faqLink });
+                        }
+                    }
+                });
+
+                populateDropdowns(dropdowns);
+            } catch (error) {
+                console.error('Error loading layer data:', error);
+            }
+        }
+
+        function populateDropdowns(dropdowns) {
+            Object.keys(dropdowns).forEach(category => {
+                const options = dropdowns[category];
+                options.forEach(option => {
+                    const select1 = document.getElementById('select-layer1');
+                    const select2 = document.getElementById('select-layer2');
+                    const select3 = document.getElementById('select-layer3');
+                    const select4 = document.getElementById('select-layer4');
+                    const select5 = document.getElementById('select-layer5');
+
+                    const optionText = `${option.questName} (${category})`;
+
+                    if (select1) {
+                        select1.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                    if (select2) {
+                        select2.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                    if (select3) {
+                        select3.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                    if (select4) {
+                        select4.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                    if (select5) {
+                        select5.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                });
+            });
+        }
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function updateLayer(layerId, url, buttonId, faqButtonId) {
+            const layer = document.getElementById(layerId);
+            const button = document.getElementById(buttonId);
+            const faqButton = document.getElementById(faqButtonId);
+            const select = document.getElementById(`select-${layerId}`);
+            
+            if (url) {
+                layer.src = url;
+                const selectedOption = select.options[select.selectedIndex];
+                const questName = selectedOption.getAttribute('data-quest-name');
+                const location = selectedOption.getAttribute('data-location');
+                const faqLink = selectedOption.getAttribute('data-faq-link');
+
+                button.textContent = questName ? `${questName} (${location})` : 'Слой';
+                faqButton.style.visibility = faqLink ? 'visible' : 'hidden';
+                faqButton.onclick = () => openFAQ(faqLink);
+            }
+        }
+
+        function bringToFront(layerId) {
+            var layers = document.querySelectorAll('.map-layer');
+            let maxZIndex = MIN_Z_INDEX;
+
+            layers.forEach(function(layer) {
+                let zIndex = parseInt(window.getComputedStyle(layer).zIndex);
+                if (zIndex > maxZIndex) {
+                    maxZIndex = zIndex;
+                }
+            });
+
+            let layer = document.getElementById(layerId);
+            let currentZIndex = parseInt(window.getComputedStyle(layer).zIndex);
+            if (currentZIndex < MAX_Z_INDEX) {
+                layer.style.zIndex = maxZIndex + 1;
+            }
+        }
+
+        function sendToBack(layerId) {
+            var layers = document.querySelectorAll('.map-layer');
+            let minZIndex = MAX_Z_INDEX;
+
+            layers.forEach(function(layer) {
+                let zIndex = parseInt(window.getComputedStyle(layer).zIndex);
+                if (zIndex < minZIndex) {
+                    minZIndex = zIndex;
+                }
+            });
+
+            let layer = document.getElementById(layerId);
+            let currentZIndex = parseInt(window.getComputedStyle(layer).zIndex);
+            if (currentZIndex > MIN_Z_INDEX) {
+                layer.style.zIndex = minZIndex - 1;
+            }
+        }
+
+        function filterOptions(selectId, searchText) {
+            const select = document.getElementById(selectId);
+            const options = select.querySelectorAll('option');
+            
+            options.forEach(option => {
+                const questName = option.textContent.toLowerCase();
+                const searchQuery = searchText.toLowerCase();
+                option.style.display = questName.includes(searchQuery) ? 'block' : 'none';
+            });
+        }
+
+        function openFAQ(faqLink) {
+            if (faqLink) {
+                window.open(faqLink, '_blank');
+            }
+        }
+
+        // Инициализация
+        loadLayerData();
+    </script>
+</body>
+</html>
