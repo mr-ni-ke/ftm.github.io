@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Страница с наложенными слоями</title>
+    <title>Шесть слоёв с canvas</title>
     <style>
         * {
             margin: 0;
@@ -22,53 +22,106 @@
             height: 100vh;
         }
 
-        .layer {
+        canvas, iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: transparent; /* Прозрачный фон */
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
             border: none;
-            background-color: rgba(34, 34, 34, 0); /* Прозрачный фон для цвет #222222 */
         }
-
-        /* Для демонстрации прозрачности, можно сделать один из слоёв с другой прозрачностью */
-        .layer:nth-child(odd) iframe {
-            background-color: rgba(34, 34, 34, 0); /* Прозрачный фон для #222222 */
-        }
-
-        .layer:nth-child(even) iframe {
-            background-color: rgba(255, 255, 255, 0.9); /* Пример слоя с фоном, почти белым */
-        }
-
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="layer">
-            <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12"></iframe>
-        </div>
-        <div class="layer">
-            <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12"></iframe>
-        </div>
-        <div class="layer">
-            <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12"></iframe>
-        </div>
-        <div class="layer">
-            <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12"></iframe>
-        </div>
-        <div class="layer">
-            <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12"></iframe>
-        </div>
-        <div class="layer">
-            <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12"></iframe>
-        </div>
+        <!-- Первый слой -->
+        <iframe id="iframe1"></iframe>
+        <canvas id="canvas1"></canvas>
+
+        <!-- Второй слой -->
+        <iframe id="iframe2"></iframe>
+        <canvas id="canvas2"></canvas>
+
+        <!-- Третий слой -->
+        <iframe id="iframe3"></iframe>
+        <canvas id="canvas3"></canvas>
+
+        <!-- Четвёртый слой -->
+        <iframe id="iframe4"></iframe>
+        <canvas id="canvas4"></canvas>
+
+        <!-- Пятый слой -->
+        <iframe id="iframe5"></iframe>
+        <canvas id="canvas5"></canvas>
+
+        <!-- Шестой слой -->
+        <iframe id="iframe6"></iframe>
+        <canvas id="canvas6"></canvas>
     </div>
+
+    <script>
+        const urls = [
+            'https://example.com',  // Ссылка для 1-го слоя
+            'https://example.com',  // Ссылка для 2-го слоя
+            'https://example.com',  // Ссылка для 3-го слоя
+            'https://example.com',  // Ссылка для 4-го слоя
+            'https://example.com',  // Ссылка для 5-го слоя
+            'https://example.com',  // Ссылка для 6-го слоя
+        ];
+
+        // Настраиваем обработку каждого слоя
+        for (let i = 1; i <= 6; i++) {
+            const iframe = document.getElementById(`iframe${i}`);
+            const canvas = document.getElementById(`canvas${i}`);
+            const ctx = canvas.getContext('2d');
+
+            // Устанавливаем размеры canvas
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Функция для обработки iframe
+            function captureIframe(i) {
+                const iframeContent = iframe.contentWindow.document.body;
+
+                // Захватываем содержимое iframe как изображение
+                html2canvas(iframeContent).then(canvasImage => {
+                    processCanvas(canvasImage, i);
+                });
+            }
+
+            // Функция для замены цвета #222222 на прозрачность
+            function processCanvas(image, i) {
+                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+
+                for (let j = 0; j < data.length; j += 4) {
+                    const r = data[j];
+                    const g = data[j + 1];
+                    const b = data[j + 2];
+
+                    // Если цвет равен #222222 (rgb(34, 34, 34))
+                    if (r === 34 && g === 34 && b === 34) {
+                        data[j + 3] = 0; // Устанавливаем прозрачность
+                    }
+                }
+
+                // Обновляем canvas с применением прозрачности
+                ctx.putImageData(imageData, 0, 0);
+            }
+
+            // Загружаем страницу в iframe и обрабатываем canvas
+            iframe.onload = function() {
+                captureIframe(i);
+            };
+
+            // Устанавливаем URL для каждого слоя
+            iframe.src = urls[i - 1];
+        }
+    </script>
+
+    <!-- html2canvas библиотека для захвата содержимого -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
