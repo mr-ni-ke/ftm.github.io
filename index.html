@@ -42,16 +42,27 @@
             align-items: center; /* Вертикальное выравнивание по центру */
             gap: 10px; /* Отступ между кнопками */
         }
-        .dropdown-button, .faq-button {
+        .dropdown-button {
             padding: 10px;
             background-color: #fff;
             border: 1px solid #ccc;
             cursor: pointer;
+            display: inline-block;
+            flex: 1; /* Позволяет кнопке растягиваться */
+            text-align: left; /* Текст слева */
         }
         .faq-button {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            display: inline-block;
             width: 60px;
             text-align: center;
             visibility: hidden; /* Скрыта по умолчанию */
+        }
+        .faq-button:hover {
+            background-color: #e0e0e0;
         }
         .dropdown {
             display: none;
@@ -72,6 +83,20 @@
             padding: 5px;
             box-sizing: border-box;
         }
+        .dropdown select {
+            background-color: #fff;
+            color: #000;
+        }
+        .dropdown input {
+            background-color: #fff;
+            color: #000;
+        }
+        .search-input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
         .bring-to-front-buttons {
             display: flex;
             right: 10px;
@@ -82,7 +107,63 @@
     <div class="map-container">
         <!-- Кнопки управления -->
         <div class="button-container">
-            <div class="button-group" id="layer-buttons"></div>
+            <div class="button-group">
+                <div class="dropdown-container">
+                    <button id="dropdown-button1" class="dropdown-button" onclick="toggleDropdown('dropdown1')">Слой 1</button>
+                    <button id="faq-button1" class="faq-button" onclick="openFAQ('faq-link1')">FAQ</button>
+                    <div id="dropdown1" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer1', this.value)">
+                        <select id="select-layer1" onchange="updateLayer('layer1', this.value, 'dropdown-button1', 'faq-button1')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer1" placeholder="Введите ссылку" oninput="updateLayer('layer1', this.value, 'dropdown-button1', 'faq-button1')">
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <button id="dropdown-button2" class="dropdown-button" onclick="toggleDropdown('dropdown2')">Слой 2</button>
+                    <button id="faq-button2" class="faq-button" onclick="openFAQ('faq-link2')">FAQ</button>
+                    <div id="dropdown2" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer2', this.value)">
+                        <select id="select-layer2" onchange="updateLayer('layer2', this.value, 'dropdown-button2', 'faq-button2')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer2" placeholder="Введите ссылку" oninput="updateLayer('layer2', this.value, 'dropdown-button2', 'faq-button2')">
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <button id="dropdown-button3" class="dropdown-button" onclick="toggleDropdown('dropdown3')">Слой 3</button>
+                    <button id="faq-button3" class="faq-button" onclick="openFAQ('faq-link3')">FAQ</button>
+                    <div id="dropdown3" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer3', this.value)">
+                        <select id="select-layer3" onchange="updateLayer('layer3', this.value, 'dropdown-button3', 'faq-button3')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer3" placeholder="Введите ссылку" oninput="updateLayer('layer3', this.value, 'dropdown-button3', 'faq-button3')">
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <button id="dropdown-button4" class="dropdown-button" onclick="toggleDropdown('dropdown4')">Слой 4</button>
+                    <button id="faq-button4" class="faq-button" onclick="openFAQ('faq-link4')">FAQ</button>
+                    <div id="dropdown4" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer4', this.value)">
+                        <select id="select-layer4" onchange="updateLayer('layer4', this.value, 'dropdown-button4', 'faq-button4')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer4" placeholder="Введите ссылку" oninput="updateLayer('layer4', this.value, 'dropdown-button4', 'faq-button4')">
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <button id="dropdown-button5" class="dropdown-button" onclick="toggleDropdown('dropdown5')">Слой 5</button>
+                    <button id="faq-button5" class="faq-button" onclick="openFAQ('faq-link5')">FAQ</button>
+                    <div id="dropdown5" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer5', this.value)">
+                        <select id="select-layer5" onchange="updateLayer('layer5', this.value, 'dropdown-button5', 'faq-button5')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer5" placeholder="Введите ссылку" oninput="updateLayer('layer5', this.value, 'dropdown-button5', 'faq-button5')">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="bring-to-front-buttons">
@@ -104,75 +185,63 @@
     <script>
         const MIN_Z_INDEX = 10;
         const MAX_Z_INDEX = 100;
-        const layerCount = 5;
 
-        // Генерация кнопок и выпадающих списков
-        function generateLayerControls() {
-            const container = document.getElementById('layer-buttons');
-
-            for (let i = 1; i <= layerCount; i++) {
-                const dropdownContainer = document.createElement('div');
-                dropdownContainer.classList.add('dropdown-container');
-
-                dropdownContainer.innerHTML = `
-                    <button id="dropdown-button${i}" class="dropdown-button" onclick="toggleDropdown('dropdown${i}')">Слой ${i}</button>
-                    <button id="faq-button${i}" class="faq-button" onclick="openFAQ('faq-link${i}')">FAQ</button>
-                    <div id="dropdown${i}" class="dropdown">
-                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer${i}', this.value)">
-                        <select id="select-layer${i}" onchange="updateLayer('layer${i}', this.value, 'dropdown-button${i}', 'faq-button${i}')">
-                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
-                        </select>
-                        <input type="text" id="input-layer${i}" placeholder="Введите ссылку" oninput="updateLayer('layer${i}', this.value, 'dropdown-button${i}', 'faq-button${i}')">
-                    </div>
-                `;
-                container.appendChild(dropdownContainer);
-            }
-        }
-
-        // Загрузка данных из текстового файла
+        // Загрузка данных из текстового файла и создание выпадающих списков
         async function loadLayerData() {
             try {
                 const response = await fetch('layers.txt');
                 const data = await response.text();
-                const dropdowns = processLayerData(data.split('\n'));
+                const lines = data.split('\n');
+                let currentCategory = '';
+                let dropdowns = {};
+
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (!line) return;
+                    
+                    if (line.startsWith('Локация')) {
+                        currentCategory = line; // Название локации
+                        dropdowns[currentCategory] = [];
+                    } else {
+                        const [questName, url, faqLink] = line.split(',');
+                        if (url) {
+                            dropdowns[currentCategory].push({ questName, url, faqLink });
+                        }
+                    }
+                });
+
                 populateDropdowns(dropdowns);
             } catch (error) {
                 console.error('Error loading layer data:', error);
             }
         }
 
-        function processLayerData(lines) {
-            let currentCategory = '';
-            let dropdowns = {};
-
-            lines.forEach(line => {
-                line = line.trim();
-                if (!line) return;
-
-                if (line.startsWith('Локация')) {
-                    currentCategory = line;
-                    dropdowns[currentCategory] = [];
-                } else {
-                    const [questName, url, faqLink] = line.split(',');
-                    if (url) {
-                        dropdowns[currentCategory].push({ questName, url, faqLink });
-                    }
-                }
-            });
-
-            return dropdowns;
-        }
-
         function populateDropdowns(dropdowns) {
             Object.keys(dropdowns).forEach(category => {
                 const options = dropdowns[category];
                 options.forEach(option => {
-                    for (let i = 1; i <= layerCount; i++) {
-                        const select = document.getElementById(`select-layer${i}`);
-                        const optionText = `${option.questName} (${category})`;
-                        if (select) {
-                            select.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
-                        }
+                    const select1 = document.getElementById('select-layer1');
+                    const select2 = document.getElementById('select-layer2');
+                    const select3 = document.getElementById('select-layer3');
+                    const select4 = document.getElementById('select-layer4');
+                    const select5 = document.getElementById('select-layer5');
+
+                    const optionText = `${option.questName} (${category})`;
+
+                    if (select1) {
+                        select1.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                    if (select2) {
+                        select2.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                    if (select3) {
+                        select3.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                    if (select4) {
+                        select4.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                    }
+                    if (select5) {
+                        select5.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
                     }
                 });
             });
@@ -195,38 +264,67 @@
                 const questName = selectedOption.getAttribute('data-quest-name');
                 const location = selectedOption.getAttribute('data-location');
                 const faqLink = selectedOption.getAttribute('data-faq-link');
-                button.innerText = `${questName} (${location})`;
+
+                button.textContent = questName ? `${questName} (${location})` : 'Слой';
                 faqButton.style.visibility = faqLink ? 'visible' : 'hidden';
+                faqButton.onclick = () => openFAQ(faqLink);
             }
         }
 
         function bringToFront(layerId) {
-            let layer = document.getElementById(layerId);
-            let currentZIndex = parseInt(layer.style.zIndex) || MIN_Z_INDEX;
+            var layers = document.querySelectorAll('.map-layer');
+            let maxZIndex = MIN_Z_INDEX;
 
+            layers.forEach(function(layer) {
+                let zIndex = parseInt(window.getComputedStyle(layer).zIndex);
+                if (zIndex > maxZIndex) {
+                    maxZIndex = zIndex;
+                }
+            });
+
+            let layer = document.getElementById(layerId);
+            let currentZIndex = parseInt(window.getComputedStyle(layer).zIndex);
             if (currentZIndex < MAX_Z_INDEX) {
-                layer.style.zIndex = MAX_Z_INDEX;
-                MAX_Z_INDEX += 10; // обновляем максимальный z-index
+                layer.style.zIndex = maxZIndex + 1;
             }
         }
 
-        function openFAQ(faqLinkId) {
-            const faqLink = document.getElementById(faqLinkId);\
-            if (faqLink) window.open(faqLink.href, '_blank');
+        function sendToBack(layerId) {
+            var layers = document.querySelectorAll('.map-layer');
+            let minZIndex = MAX_Z_INDEX;
+
+            layers.forEach(function(layer) {
+                let zIndex = parseInt(window.getComputedStyle(layer).zIndex);
+                if (zIndex < minZIndex) {
+                    minZIndex = zIndex;
+                }
+            });
+
+            let layer = document.getElementById(layerId);
+            let currentZIndex = parseInt(window.getComputedStyle(layer).zIndex);
+            if (currentZIndex > MIN_Z_INDEX) {
+                layer.style.zIndex = minZIndex - 1;
+            }
         }
 
-        function filterOptions(selectId, filterValue) {
+        function filterOptions(selectId, searchText) {
             const select = document.getElementById(selectId);
             const options = select.querySelectorAll('option');
-
-            filterValue = filterValue.toLowerCase();
+            
             options.forEach(option => {
-                const questName = option.innerText.toLowerCase();
-                option.style.display = questName.includes(filterValue) ? 'block' : 'none';
+                const questName = option.textContent.toLowerCase();
+                const searchQuery = searchText.toLowerCase();
+                option.style.display = questName.includes(searchQuery) ? 'block' : 'none';
             });
         }
 
-        generateLayerControls();
+        function openFAQ(faqLink) {
+            if (faqLink) {
+                window.open(faqLink, '_blank');
+            }
+        }
+
+        // Инициализация
         loadLayerData();
     </script>
 </body>
