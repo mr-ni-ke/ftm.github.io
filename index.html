@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сетка 3x2 с обрезкой</title>
+    <title>Сетка 3x2 с обрезкой и меню</title>
     <style>
         body {
             margin: 0;
@@ -14,9 +14,10 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 1px; /* Для отображения границ между ячейками */
+            gap: 1px;
             height: 100vh;
             width: 100vw;
+            position: relative;
         }
         .grid-item {
             position: relative;
@@ -25,11 +26,60 @@
         }
         iframe {
             position: absolute;
-            top: -160px; /* Сдвигаем iframe на 160px вверх */
+            top: -160px;
             left: 0;
             width: 100%;
-            height: calc(100% + 160px); /* Увеличиваем высоту iframe, чтобы заполнить ячейку */
+            height: calc(100% + 160px);
             border: none;
+        }
+        .menu-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        .dropdown-button {
+            display: block;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ccc;
+        }
+        .dropdown-button:last-child {
+            border-bottom: none;
+        }
+        .submenu {
+            display: none;
+            padding: 10px;
+        }
+        .submenu-button {
+            display: block;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .submenu-content {
+            display: none;
+            margin-top: 10px;
+        }
+        .search-bar {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: calc(100% - 20px);
         }
     </style>
 </head>
@@ -53,6 +103,89 @@
         <div class="grid-item">
             <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" title="Layer 6"></iframe>
         </div>
+        <button class="menu-button" onclick="toggleMenu()">Меню</button>
+        <div id="dropdown-menu" class="dropdown">
+            <div id="layer1" class="dropdown-button" onclick="showSubMenu(1)">Слой 1</div>
+            <div id="layer2" class="dropdown-button" onclick="showSubMenu(2)">Слой 2</div>
+            <div id="layer3" class="dropdown-button" onclick="showSubMenu(3)">Слой 3</div>
+            <div id="layer4" class="dropdown-button" onclick="showSubMenu(4)">Слой 4</div>
+            <div id="layer5" class="dropdown-button" onclick="showSubMenu(5)">Слой 5</div>
+            <div id="layer6" class="dropdown-button" onclick="showSubMenu(6)">Слой 6</div>
+        </div>
+        <div id="submenu" class="submenu">
+            <input type="text" id="search-quests" class="search-bar" placeholder="Поиск квестов...">
+            <div id="quests-list" class="submenu-content"></div>
+            <input type="text" id="search-loot" class="search-bar" placeholder="Поиск предметов...">
+            <div id="loot-list" class="submenu-content"></div>
+        </div>
     </div>
+
+    <script>
+        const questData = {
+            1: [
+                { name: "Квест 1", link: "https://example.com/quest1", faq: "https://example.com/faq1" },
+                { name: "Квест 2", link: "https://example.com/quest2", faq: "https://example.com/faq2" }
+                // Добавьте остальные квесты
+            ],
+            2: [
+                { name: "Квест 3", link: "https://example.com/quest3", faq: "https://example.com/faq3" }
+                // Добавьте остальные квесты
+            ],
+            // Продолжайте для остальных слоев
+        };
+
+        const lootData = {
+            1: ["Предмет 1", "https://example.com/item1", "https://example.com/item2", "https://example.com/item3", "https://example.com/item4", "https://example.com/item5", "https://example.com/item6"],
+            2: ["Предмет 2", "https://example.com/item7", "https://example.com/item8", "https://example.com/item9", "https://example.com/item10", "https://example.com/item11", "https://example.com/item12"],
+            // Продолжайте для остальных слоев
+        };
+
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
+        }
+
+        function showSubMenu(layer) {
+            const submenu = document.getElementById('submenu');
+            submenu.style.display = 'block';
+            const questList = document.getElementById('quests-list');
+            const lootList = document.getElementById('loot-list');
+            
+            // Очистка старого содержимого
+            questList.innerHTML = '';
+            lootList.innerHTML = '';
+
+            // Добавление квестов
+            const quests = questData[layer] || [];
+            quests.forEach(quest => {
+                const questItem = document.createElement('div');
+                questItem.innerHTML = `<a href="${quest.link}" target="_blank">${quest.name}</a> <a href="${quest.faq}" target="_blank">FAQ</a>`;
+                questList.appendChild(questItem);
+            });
+
+            // Добавление предметов
+            const loot = lootData[layer] || [];
+            loot.slice(1).forEach((itemLink, index) => {
+                const lootItem = document.createElement('div');
+                lootItem.innerHTML = `<a href="${itemLink}" target="_blank">${loot[0]} ${index + 1}</a>`;
+                lootList.appendChild(lootItem);
+            });
+
+            // Поиск
+            document.getElementById('search-quests').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                questList.querySelectorAll('div').forEach(item => {
+                    item.style.display = item.textContent.toLowerCase().includes(searchTerm) ? 'block' : 'none';
+                });
+            });
+
+            document.getElementById('search-loot').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                lootList.querySelectorAll('div').forEach(item => {
+                    item.style.display = item.textContent.toLowerCase().includes(searchTerm) ? 'block' : 'none';
+                });
+            });
+        }
+    </script>
 </body>
 </html>
