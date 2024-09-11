@@ -1,39 +1,17 @@
-Локация Улицы
 Вам посылка,https://tarkov.help/ru/map/ulici/filter/quest/262,https://tarkov.help/ru/quest/vam-posylka
 Слава КПСС - Часть 1,https://tarkov.help/ru/map/ulici/filter/quest/268,https://tarkov.help/ru/quest/slavakpss
 Слава КПСС - Часть 2,https://tarkov.help/ru/map/ulici/filter/quest/314,https://tarkov.help/ru/quest/slava-kpss2
 Земельный вопрос,https://tarkov.help/ru/map/ulici/filter/markers/12750,12751,12752,12753,12754,12755,https://tarkov.help/ru/quest/zemelniy-vopros
-
-Локация Эпицентр
 Стрельба по баночкам - Утес,https://tarkov.help/ru/map/ground-zero/filter/markers/11708,https://tarkov.help/ru/quest/strelba-po-banochkam
 Стрельба по баночкам - АГС,https://tarkov.help/ru/map/ground-zero/filter/markers/11709,https://tarkov.help/ru/quest/strelba-po-banochkam
 Роскошная Жизнь,https://tarkov.help/ru/map/ground-zero/filter/quest/353,https://tarkov.help/ru/quest/roskoshnaya-jizn
-
-
-Локация Завод
 Посылка из прошлого - Место закладки,https://tarkov.help/ru/map/zavod/filter/quest/11,https://tarkov.help/ru/quest/posylka-iz-proshlogo
 Почтальон Печкин - Часть 1,https://tarkov.help/ru/map/zavod/filter/quest/14,https://tarkov.help/ru/quest/pochtalon-pechkin
 В чужой шкуре,https://tarkov.help/ru/map/zavod/filter/quest/419,https://tarkov.help/ru/quest/v-chujoi-shkure
-
-Локация Лаборатория
-
-
-Локация Лес
 Поисковая миссия,https://tarkov.help/ru/map/les/filter/quest/19,https://tarkov.help/ru/quest/poiskovaya-missiya
-
-
-Локация Развязка
-
-
-Локация Резерв
-
-
-Локация Таможня
 Проверка на вшивость - Ключ,https://tarkov.help/ru/map/tamozhnya/filter/markers/1266,https://tarkov.help/ru/quest/proverka-na-vshivost
 Проверка на вшивость - Грузовик,https://tarkov.help/ru/map/tamozhnya/filter/quest/5,https://tarkov.help/ru/quest/proverka-na-vshivost
 Посылка из прошлого - Папка (Ключ от офиса таможни),https://tarkov.help/ru/map/tamozhnya/filter/quest/11,https://tarkov.help/ru/quest/posylka-iz-proshlogo
 Нефтянка,https://tarkov.help/ru/map/tamozhnya/filter/quest/20,https://tarkov.help/ru/quest/neftyanka
 Компромат (Ключ от времянки на заводской зоне Таможни),https://tarkov.help/ru/map/tamozhnya/filter/quest/12,https://tarkov.help/ru/quest/kompromat
-
-Локация Маяк
 Энергетический кризис,https://tarkov.help/ru/map/mayak/filter/quest/236,https://tarkov.help/ru/quest/energeticheskij-krizis

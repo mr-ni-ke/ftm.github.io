@@ -121,31 +121,13 @@
     </div>
 
     <script>
-        const questData = {
-            1: [
-                { name: "Квест 1", link: "https://example.com/quest1", faq: "https://example.com/faq1" },
-                { name: "Квест 2", link: "https://example.com/quest2", faq: "https://example.com/faq2" }
-                // Добавьте остальные квесты
-            ],
-            2: [
-                { name: "Квест 3", link: "https://example.com/quest3", faq: "https://example.com/faq3" }
-                // Добавьте остальные квесты
-            ],
-            // Продолжайте для остальных слоев
-        };
-
-        const lootData = {
-            1: ["Предмет 1", "https://example.com/item1", "https://example.com/item2", "https://example.com/item3", "https://example.com/item4", "https://example.com/item5", "https://example.com/item6"],
-            2: ["Предмет 2", "https://example.com/item7", "https://example.com/item8", "https://example.com/item9", "https://example.com/item10", "https://example.com/item11", "https://example.com/item12"],
-            // Продолжайте для остальных слоев
-        };
-
-        function toggleMenu() {
-            const menu = document.getElementById('dropdown-menu');
-            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
+        async function loadTxtData(url) {
+            const response = await fetch(url);
+            const text = await response.text();
+            return text.trim().split('\n').map(line => line.split(','));
         }
 
-        function showSubMenu(layer) {
+        async function showSubMenu(layer) {
             const submenu = document.getElementById('submenu');
             submenu.style.display = 'block';
             const questList = document.getElementById('quests-list');
@@ -155,19 +137,20 @@
             questList.innerHTML = '';
             lootList.innerHTML = '';
 
-            // Добавление квестов
-            const quests = questData[layer] || [];
-            quests.forEach(quest => {
+            // Загрузка данных квестов
+            const quests = await loadTxtData('layers.txt');
+            quests.forEach(([name, link, faq], index) => {
                 const questItem = document.createElement('div');
-                questItem.innerHTML = `<a href="${quest.link}" target="_blank">${quest.name}</a> <a href="${quest.faq}" target="_blank">FAQ</a>`;
+                questItem.innerHTML = `<a href="${link}" target="_blank">${name}</a> <a href="${faq}" target="_blank">FAQ</a>`;
                 questList.appendChild(questItem);
             });
 
-            // Добавление предметов
-            const loot = lootData[layer] || [];
-            loot.slice(1).forEach((itemLink, index) => {
+            // Загрузка данных предметов
+            const loot = await loadTxtData('loot.txt');
+            const lootItems = loot[layer - 1] || [];
+            lootItems.slice(1).forEach((itemLink, index) => {
                 const lootItem = document.createElement('div');
-                lootItem.innerHTML = `<a href="${itemLink}" target="_blank">${loot[0]} ${index + 1}</a>`;
+                lootItem.innerHTML = `<a href="${itemLink}" target="_blank">${lootItems[0]} ${index + 1}</a>`;
                 lootList.appendChild(lootItem);
             });
 
@@ -185,6 +168,11 @@
                     item.style.display = item.textContent.toLowerCase().includes(searchTerm) ? 'block' : 'none';
                 });
             });
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
         }
     </script>
 </body>
