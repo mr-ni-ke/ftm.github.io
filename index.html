@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сетка 3x2 с обрезкой и меню</title>
+    <title>Сетка 3x2 с обрезкой и меню...</title>
     <style>
         body {
             margin: 0;
@@ -53,9 +53,9 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             z-index: 1000;
+            padding: 10px;
         }
         .dropdown-button {
-            display: block;
             padding: 10px;
             cursor: pointer;
             border-bottom: 1px solid #ccc;
@@ -67,19 +67,13 @@
             display: none;
             padding: 10px;
         }
-        .submenu-button {
-            display: block;
-            padding: 10px;
-            cursor: pointer;
-        }
-        .submenu-content {
-            display: none;
-            margin-top: 10px;
-        }
         .search-bar {
             margin-bottom: 10px;
             padding: 5px;
             width: calc(100% - 20px);
+        }
+        .submenu-content {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -127,6 +121,11 @@
             return text.trim().split('\n').map(line => line.split(','));
         }
 
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
+        }
+
         async function showSubMenu(layer) {
             const submenu = document.getElementById('submenu');
             submenu.style.display = 'block';
@@ -140,9 +139,11 @@
             // Загрузка данных квестов
             const quests = await loadTxtData('layers.txt');
             quests.forEach(([name, link, faq], index) => {
-                const questItem = document.createElement('div');
-                questItem.innerHTML = `<a href="${link}" target="_blank">${name}</a> <a href="${faq}" target="_blank">FAQ</a>`;
-                questList.appendChild(questItem);
+                if (index + 1 === layer) {
+                    const questItem = document.createElement('div');
+                    questItem.innerHTML = `<a href="${link}" target="_blank">${name}</a> <a href="${faq}" target="_blank">FAQ</a>`;
+                    questList.appendChild(questItem);
+                }
             });
 
             // Загрузка данных предметов
@@ -168,11 +169,6 @@
                     item.style.display = item.textContent.toLowerCase().includes(searchTerm) ? 'block' : 'none';
                 });
             });
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById('dropdown-menu');
-            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
         }
     </script>
 </body>
