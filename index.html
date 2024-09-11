@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сетка 3x2 с обрезкой и меню...</title>
+    <title>Сетка 3x2 с обрезкой и меню</title>
     <style>
         body {
             margin: 0;
@@ -79,32 +79,35 @@
 </head>
 <body>
     <div class="grid-container">
-        <div class="grid-item">
+        <div id="layer1" class="grid-item">
             <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" title="Layer 1"></iframe>
         </div>
-        <div class="grid-item">
+        <div id="layer2" class="grid-item">
             <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" title="Layer 2"></iframe>
         </div>
-        <div class="grid-item">
+        <div id="layer3" class="grid-item">
             <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" title="Layer 3"></iframe>
         </div>
-        <div class="grid-item">
+        <div id="layer4" class="grid-item">
             <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" title="Layer 4"></iframe>
         </div>
-        <div class="grid-item">
+        <div id="layer5" class="grid-item">
             <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" title="Layer 5"></iframe>
         </div>
-        <div class="grid-item">
+        <div id="layer6" class="grid-item">
             <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" title="Layer 6"></iframe>
         </div>
-        <button class="menu-button" onclick="toggleMenu()">Меню</button>
+        <button class="menu-button" onclick="toggleDropdown()">Меню</button>
         <div id="dropdown-menu" class="dropdown">
-            <div id="layer1" class="dropdown-button" onclick="showSubMenu(1)">Слой 1</div>
-            <div id="layer2" class="dropdown-button" onclick="showSubMenu(2)">Слой 2</div>
-            <div id="layer3" class="dropdown-button" onclick="showSubMenu(3)">Слой 3</div>
-            <div id="layer4" class="dropdown-button" onclick="showSubMenu(4)">Слой 4</div>
-            <div id="layer5" class="dropdown-button" onclick="showSubMenu(5)">Слой 5</div>
-            <div id="layer6" class="dropdown-button" onclick="showSubMenu(6)">Слой 6</div>
+            <select id="layer-select" onchange="changeLayer()">
+                <option value="" disabled selected>Выберите слой</option>
+                <option value="1">Слой 1</option>
+                <option value="2">Слой 2</option>
+                <option value="3">Слой 3</option>
+                <option value="4">Слой 4</option>
+                <option value="5">Слой 5</option>
+                <option value="6">Слой 6</option>
+            </select>
         </div>
         <div id="submenu" class="submenu">
             <input type="text" id="search-quests" class="search-bar" placeholder="Поиск квестов...">
@@ -115,15 +118,23 @@
     </div>
 
     <script>
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdown-menu');
+            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
+        }
+
+        function changeLayer() {
+            const selectedLayer = document.getElementById('layer-select').value;
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach((iframe, index) => {
+                iframe.style.display = index + 1 == selectedLayer ? 'block' : 'none';
+            });
+        }
+
         async function loadTxtData(url) {
             const response = await fetch(url);
             const text = await response.text();
             return text.trim().split('\n').map(line => line.split(','));
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById('dropdown-menu');
-            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
         }
 
         async function showSubMenu(layer) {
