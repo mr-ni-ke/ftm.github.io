@@ -17,12 +17,14 @@
             width: 100%;
             height: 1271px;
         }
-        canvas {
+        .map-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            border: none;
+            transition: opacity 0.3s ease;
         }
         .button-container {
             position: absolute;
@@ -34,6 +36,41 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+        .dropdown-container {
+            display: flex;
+            align-items: center; /* Вертикальное выравнивание по центру */
+            gap: 10px; /* Отступ между кнопками */
+        }
+        .dropdown-button, .faq-button {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .faq-button {
+            width: 60px;
+            text-align: center;
+            visibility: hidden; /* Скрыта по умолчанию */
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            z-index: 101;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .dropdown select, .dropdown input {
+            width: 100%;
+            border: none;
+            padding: 5px;
+            box-sizing: border-box;
         }
         .bring-to-front-buttons {
             display: flex;
@@ -49,19 +86,19 @@
         </div>
 
         <div class="bring-to-front-buttons">
-            <button onclick="bringToFront('canvas1')">Вывести слой 1 наверх</button>
-            <button onclick="bringToFront('canvas2')">Вывести слой 2 наверх</button>
-            <button onclick="bringToFront('canvas3')">Вывести слой 3 наверх</button>
-            <button onclick="bringToFront('canvas4')">Вывести слой 4 наверх</button>
-            <button onclick="bringToFront('canvas5')">Вывести слой 5 наверх</button>
+            <button onclick="bringToFront('layer1')">Вывести слой 1 наверх</button>
+            <button onclick="bringToFront('layer2')">Вывести слой 2 наверх</button>
+            <button onclick="bringToFront('layer3')">Вывести слой 3 наверх</button>
+            <button onclick="bringToFront('layer4')">Вывести слой 4 наверх</button>
+            <button onclick="bringToFront('layer5')">Вывести слой 5 наверх</button>
         </div>
 
-        <!-- Слои карт (с использованием canvas) -->
-        <canvas id="canvas1" width="800" height="600"></canvas>
-        <canvas id="canvas2" width="800" height="600"></canvas>
-        <canvas id="canvas3" width="800" height="600"></canvas>
-        <canvas id="canvas4" width="800" height="600"></canvas>
-        <canvas id="canvas5" width="800" height="600"></canvas>
+        <!-- Слои карт -->
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer1" class="map-layer" style="z-index: 10; opacity: 0.7;"></iframe>
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer2" class="map-layer" style="z-index: 20; opacity: 0.7;"></iframe>
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer3" class="map-layer" style="z-index: 30; opacity: 0.7;"></iframe>
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer4" class="map-layer" style="z-index: 40; opacity: 0.7;"></iframe>
+        <iframe src="https://tarkov.help/ru/map/tamozhnya/filter/quest/12" id="layer5" class="map-layer" style="z-index: 50; opacity: 0.7;"></iframe>
     </div>
 
     <script>
@@ -69,65 +106,128 @@
         const MAX_Z_INDEX = 100;
         const layerCount = 5;
 
-        // Конвертация HEX в RGB
-        function hexToRgb(hex) {
-            const bigint = parseInt(hex.replace('#', ''), 16);
-            return {
-                r: (bigint >> 16) & 255,
-                g: (bigint >> 8) & 255,
-                b: bigint & 255
-            };
+        // Генерация кнопок и выпадающих списков
+        function generateLayerControls() {
+            const container = document.getElementById('layer-buttons');
+
+            for (let i = 1; i <= layerCount; i++) {
+                const dropdownContainer = document.createElement('div');
+                dropdownContainer.classList.add('dropdown-container');
+
+                dropdownContainer.innerHTML = `
+                    <button id="dropdown-button${i}" class="dropdown-button" onclick="toggleDropdown('dropdown${i}')">Слой ${i}</button>
+                    <button id="faq-button${i}" class="faq-button" onclick="openFAQ('faq-link${i}')">FAQ</button>
+                    <div id="dropdown${i}" class="dropdown">
+                        <input type="text" class="search-input" placeholder="Поиск по названию" oninput="filterOptions('select-layer${i}', this.value)">
+                        <select id="select-layer${i}" onchange="updateLayer('layer${i}', this.value, 'dropdown-button${i}', 'faq-button${i}')">
+                            <option value="" data-quest-name="" data-location="" data-faq-link="">Выбери квест</option>
+                        </select>
+                        <input type="text" id="input-layer${i}" placeholder="Введите ссылку" oninput="updateLayer('layer${i}', this.value, 'dropdown-button${i}', 'faq-button${i}')">
+                    </div>
+                `;
+                container.appendChild(dropdownContainer);
+            }
         }
 
-        // Фильтрация цвета на canvas
-        function filterColor(imageData, colorToMakeTransparent) {
-            const pixels = imageData.data;
-            const rgbToMakeTransparent = hexToRgb(colorToMakeTransparent);
+        // Загрузка данных из текстового файла
+        async function loadLayerData() {
+            try {
+                const response = await fetch('layers.txt');
+                const data = await response.text();
+                const dropdowns = processLayerData(data.split('\n'));
+                populateDropdowns(dropdowns);
+            } catch (error) {
+                console.error('Error loading layer data:', error);
+            }
+        }
 
-            for (let i = 0; i < pixels.length; i += 4) {
-                const r = pixels[i];
-                const g = pixels[i + 1];
-                const b = pixels[i + 2];
+        function processLayerData(lines) {
+            let currentCategory = '';
+            let dropdowns = {};
 
-                if (r === rgbToMakeTransparent.r && g === rgbToMakeTransparent.g && b === rgbToMakeTransparent.b) {
-                    pixels[i + 3] = 0; // Прозрачность
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+
+                if (line.startsWith('Локация')) {
+                    currentCategory = line;
+                    dropdowns[currentCategory] = [];
+                } else {
+                    const [questName, url, faqLink] = line.split(',');
+                    if (url) {
+                        dropdowns[currentCategory].push({ questName, url, faqLink });
+                    }
                 }
+            });
+
+            return dropdowns;
+        }
+
+        function populateDropdowns(dropdowns) {
+            Object.keys(dropdowns).forEach(category => {
+                const options = dropdowns[category];
+                options.forEach(option => {
+                    for (let i = 1; i <= layerCount; i++) {
+                        const select = document.getElementById(`select-layer${i}`);
+                        const optionText = `${option.questName} (${category})`;
+                        if (select) {
+                            select.innerHTML += `<option value="${option.url}" data-quest-name="${option.questName}" data-location="${category}" data-faq-link="${option.faqLink}">${optionText}</option>`;
+                        }
+                    }
+                });
+            });
+        }
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function updateLayer(layerId, url, buttonId, faqButtonId) {
+            const layer = document.getElementById(layerId);
+            const button = document.getElementById(buttonId);
+            const faqButton = document.getElementById(faqButtonId);
+            const select = document.getElementById(`select-${layerId}`);
+            
+            if (url) {
+                layer.src = url;
+                const selectedOption = select.options[select.selectedIndex];
+                const questName = selectedOption.getAttribute('data-quest-name');
+                const location = selectedOption.getAttribute('data-location');
+                const faqLink = selectedOption.getAttribute('data-faq-link');
+                button.innerText = `${questName} (${location})`;
+                faqButton.style.visibility = faqLink ? 'visible' : 'hidden';
             }
-            return imageData;
         }
 
-        // Загрузка изображения и применение фильтра
-        function loadImageAndFilterColor(canvasId, imageSrc, colorToMakeTransparent) {
-            const canvas = document.getElementById(canvasId);
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';  // Для поддержки CORS
-            img.src = imageSrc;
+        function bringToFront(layerId) {
+            let layer = document.getElementById(layerId);
+            let currentZIndex = parseInt(layer.style.zIndex) || MIN_Z_INDEX;
 
-            img.onload = function () {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const filteredData = filterColor(imageData, colorToMakeTransparent);
-                ctx.putImageData(filteredData, 0, 0);
-            };
-        }
-
-        // Пример использования для нескольких слоев
-        loadImageAndFilterColor('canvas1', 'https://example.com/your-map-image1.jpg', '#222222');
-        loadImageAndFilterColor('canvas2', 'https://example.com/your-map-image2.jpg', '#222222');
-        loadImageAndFilterColor('canvas3', 'https://example.com/your-map-image3.jpg', '#222222');
-        loadImageAndFilterColor('canvas4', 'https://example.com/your-map-image4.jpg', '#222222');
-        loadImageAndFilterColor('canvas5', 'https://example.com/your-map-image5.jpg', '#222222');
-
-        // Вывод слоя на передний план
-        function bringToFront(canvasId) {
-            let canvas = document.getElementById(canvasId);
-            let currentZIndex = parseInt(canvas.style.zIndex) || MIN_Z_INDEX;
             if (currentZIndex < MAX_Z_INDEX) {
-                canvas.style.zIndex = MAX_Z_INDEX;
-                MAX_Z_INDEX += 10;
+                layer.style.zIndex = MAX_Z_INDEX;
+                MAX_Z_INDEX += 10; // обновляем максимальный z-index
             }
         }
+
+        function openFAQ(faqLinkId) {
+            const faqLink = document.getElementById(faqLinkId);\
+            if (faqLink) window.open(faqLink.href, '_blank');
+        }
+
+        function filterOptions(selectId, filterValue) {
+            const select = document.getElementById(selectId);
+            const options = select.querySelectorAll('option');
+
+            filterValue = filterValue.toLowerCase();
+            options.forEach(option => {
+                const questName = option.innerText.toLowerCase();
+                option.style.display = questName.includes(filterValue) ? 'block' : 'none';
+            });
+        }
+
+        generateLayerControls();
+        loadLayerData();
     </script>
 </body>
 </html>
